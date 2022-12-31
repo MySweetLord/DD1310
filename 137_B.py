@@ -1,7 +1,22 @@
 """
-projketuppgift 137 C
+projketuppgift 137 B
 """
-from kraftverk import Kraftverk
+from kraftverk_B import Vindkraftverk
+from kraftverk_B import Solkraftverk
+
+def powerplant_type():
+    print("1. Solar powerplant\n2. Wind powerplant")
+    a = True
+    while a == True:
+        try:
+            print("Enter number for corresponding powerplant type:", end="")
+            pwrplnt_type = int(input())
+            if pwrplnt_type == 1 or pwrplnt_type == 2: 
+                return pwrplnt_type
+                a = False
+            else: raise ValueError
+        except ValueError:
+            print("Enter number 1 or 2 only")
 
 def area_input():
     a = True
@@ -14,12 +29,36 @@ def area_input():
         except ValueError:
             print("Enter positive numerical value only")
     return int(area)
-    
+
+def quant_input():
+    a = True
+    while a == True:
+        try:
+            print("Enter number of wind-powerplants:", end="")
+            quantity = int(input())
+            if quantity <= 0: raise ValueError
+            a = False
+        except ValueError:
+            print("Enter positive integer value only")
+    return int(quantity)
+
+def rotor_size():
+    a = True
+    while a == True:
+        try:
+            print("Enter rotor diameter between 25 and 50 [m]:", end="")
+            rotor_size = float(input())
+            if rotor_size < 25 or rotor_size > 50: raise ValueError
+            a = False
+        except ValueError:
+            print("Enter positive numerical value beteween 25 and 50 only")
+    return rotor_size
+ 
 def prop_konst_input():
     a = True
     while a == True:
         try:
-            print("Enter proportionality constant of powerplant:", end="")
+            print("Enter proportionality constant of powerplant [W]:", end="")
             prop_konst = float(input())
             if prop_konst <= 0: raise ValueError
             a = False
@@ -27,7 +66,7 @@ def prop_konst_input():
             print("Enter positive numerical value only")
     return prop_konst
 
-def latitud_input():
+def latitude_input():
     a = True
     while a == True:
         try:
@@ -81,36 +120,56 @@ def write_result(sort_year_sum_dict, powerplant_list, all_powerplant_all_data_li
             a = False
         except ValueError: print("Enter integer for corresponding powerplant")
         except IndexError: print("Powerplant does not exist, try again")
-            
+
 def main():
 
-    print("Powerplant simulator")
+    print("POWERPLANT SIMULATOR")
 
-    powerplant_list = [ ] #lista med alla objekt
-    latitude_list = [ ] #Lista med alla latituder för alla objekt
-    area = area_input()
-    prop_konst = prop_konst_input()
+    type = powerplant_type()
 
-    a = True
-    while a == True:
-        latitude = latitud_input()
-        powerplant = Kraftverk(area, prop_konst, latitude) #skapar objekt, dvs skapar ett kraftverk
-        
-        powerplant_list.append(powerplant)
-        latitude_list.append(int(latitude))
-        
-        a = add_latitude()
+    if type == 1:
+        powerplant_list = [ ] #lista med alla objekt
+        latitude_list = [ ] #Lista med alla latituder för alla objekt
+        area = area_input()
+        prop_konst = prop_konst_input()
+
+        a = True
+        while a == True:
+            latitude = latitude_input()
+            powerplant = Solkraftverk(area, prop_konst, latitude) #skapar objekt, dvs skapar ett powerplant
+    
+            powerplant_list.append(powerplant)
+            latitude_list.append(int(latitude))
+            
+            a = add_latitude() #returnerar True/False
+
+    if type == 2:
+        powerplant_list = [ ] #lista med alla objekt
+        latitude_list = [ ] #Lista med alla latituder för alla objekt
+        quantity = quant_input()
+        prop_konst = prop_konst_input()
+        rotor = rotor_size()
+
+        a = True
+        while a == True:
+            latitude = latitude_input()
+            powerplant = Vindkraftverk(quantity, prop_konst, latitude, rotor) #skapar objekt, dvs skapar ett powerplant
+            
+            powerplant_list.append(powerplant)
+            latitude_list.append(int(latitude))
+            
+            a = add_latitude()
 
     year_sum_list = [ ] 
     all_powerplant_all_data_list = [ ]
-    
+        
     for powerplant in powerplant_list:
         t = 1 
         w_year_list = [ ]
         year_sum = 0
-        
+            
         all_data_list = [ ]
-    
+        
         for i in range(360):
             faktor = powerplant.faktor()
             v = powerplant.v(t)
@@ -124,10 +183,10 @@ def main():
             t += 1
 
         year_sum_list.append(round(year_sum))
-        all_powerplant_all_data_list.append(all_data_list)
+        all_powerplant_all_data_list.append(all_data_list)   
 
     sort_year_sum_dict = result(year_sum_list, latitude_list)
-            
+
     write_result(sort_year_sum_dict, powerplant_list, all_powerplant_all_data_list)
-    
+
 main()
