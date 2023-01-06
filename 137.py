@@ -55,10 +55,10 @@ def add_latitude():
         except ValueError:
             print("Enter y for additional latitude or n to continue")
 
-def result(year_sum_list, latitude_list):
+def result(w_sum_list, latitude_list):
     year_sum_dict = { }
     i = 0
-    for w in year_sum_list:
+    for w in w_sum_list:
         year_sum_dict[latitude_list[i]] = [i, round(w/360, 1)]
         i += 1
     sort_year_sum_dict = dict(sorted(year_sum_dict.items()))
@@ -84,9 +84,9 @@ def write_result(sort_year_sum_dict, powerplant_list, all_powerplant_all_data_li
             
 def main():
 
-    print("Powerplant simulator")
+    print("POWERPLANT SIMULATOR")
 
-    powerplant_list = [ ] #lista med alla objekt
+    powerplant_list = [ ] #lista med alla objekt, dvs alla instanser av kraftverk
     latitude_list = [ ] #Lista med alla latituder för alla objekt
     area = area_input()
     prop_konst = prop_konst_input()
@@ -101,32 +101,18 @@ def main():
         
         a = add_latitude()
 
-    year_sum_list = [ ] 
-    all_powerplant_all_data_list = [ ]
-    
-    for powerplant in powerplant_list:
-        t = 1 
-        w_year_list = [ ]
-        year_sum = 0
-        
-        all_data_list = [ ]
-    
-        for i in range(360):
-            faktor = powerplant.faktor()
-            v = powerplant.v(t)
-            w = powerplant.w(faktor, v)
-            #lista med enbart w för varje dag
-            w_year_list.append(round(w, 3))
-            year_sum += w
+    w_sum_list = [ ] #årsproduktion för varje objekt(kraftverk)
+    all_powerplant_all_data_list = [ ] #lista med listor av alla värden per dag för alla objek.
 
-            data = powerplant.data(t, faktor, v, w)
-            all_data_list.append(data)
-            t += 1
-
-        year_sum_list.append(round(year_sum))
+    for powerplant in powerplant_list: #simulerar ett år för varje kraftverk och lägger till värden i listor
+        year_loop = powerplant.year_loop()
+        w_year_list = year_loop[0] #w_year_list behövs bara för att beräkna std. avvikelse
+        w_sum = year_loop[1]
+        w_sum_list.append(round(w_sum ))
+        all_data_list = year_loop[2]
         all_powerplant_all_data_list.append(all_data_list)
 
-    sort_year_sum_dict = result(year_sum_list, latitude_list)
+    sort_year_sum_dict = result(w_sum_list, latitude_list)
             
     write_result(sort_year_sum_dict, powerplant_list, all_powerplant_all_data_list)
     
