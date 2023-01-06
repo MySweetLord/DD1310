@@ -51,8 +51,7 @@ class Solkraftverk:
         n = 0
         month = ["January", "February", "Mars", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     
-        x = 0
-        X = 1
+        x = 1
         for i in range(12):
             file.write("="*100+"\n")
             file.write(month[n]+"\n")
@@ -61,10 +60,28 @@ class Solkraftverk:
             file.write(f"{'Day' :3s} {gap} {'Area[m2]' :10s} {gap} {'latitude' :10s} {gap} {'Prop_konst[kWh]' :10s} {gap} {'Exposure' :10s} {gap} {'v' :10s} {gap} {'Production[W]' :10s}"+"\n")
             file.write("_"*100+"\n")
             n += 1
-            for data in all_data_list[30*x:30*X]:
+            for data in all_data_list[30*(x-1):30*x]:
                 file.write(f"{data[0] :<3d} {gap} {data[1] :<10d} {gap*2} {data[2] :<10.3f} {gap*3} {data[3] :<8d} {gap} {data[4] :10.4f} {gap} {data[5] :10.2f} {gap*3} {data[6] :<10.1f}"+"\n")
             x += 1
-            X += 1
+
+    def year_loop(self):
+    
+        t = 1 
+        w_year_list = [ ] #lista med w för varje dag för ett objekt(kraftverk)    
+        all_data_list = [ ]
+        
+        for i in range(360):
+            faktor = self.faktor()
+            v = self.v(t)
+            w = self.w(faktor, v)
+
+            w_year_list.append(round(w, 3))
+            data = self.data(t, faktor, v, w)            
+            all_data_list.append(data)
+            t += 1
+        
+        year_sum = sum(w_year_list)
+        return [w_year_list, year_sum, all_data_list]    
 
 class Vindkraftverk:
 
@@ -113,8 +130,7 @@ class Vindkraftverk:
         n = 0
         month = ["January", "February", "Mars", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     
-        x = 0
-        X = 1
+        x = 1
         for i in range(12):
             file.write("="*100+"\n")
             file.write(month[n]+"\n")
@@ -123,7 +139,25 @@ class Vindkraftverk:
             file.write(f"{'Day' :3s} {gap} {'Quantity' :10s} {gap} {'latitude' :10s} {gap} {'Prop_konst[kWh]' :10s} {gap} {'Wind' :10s} {gap} {'v' :10s} {gap} {'Production[W]' :10s}"+"\n")
             file.write("_"*100+"\n")
             n += 1
-            for data in all_data_list[30*x:30*X]:
+            for data in all_data_list[30*(x-1):30*x]:
                 file.write(f"{data[0] :<3d} {gap} {data[1] :<10d} {gap*2} {data[2] :<10.3f} {gap*3} {data[3] :<8d} {gap} {data[4] :10.4f} {gap} {data[5] :10.2f} {gap*3} {data[6] :<10.1f}"+"\n")
             x += 1
-            X += 1
+
+    def year_loop(self):
+    
+        t = 1 
+        w_year_list = [ ] #lista med w för varje dag för ett objekt(kraftverk)    
+        all_data_list = [ ]
+        
+        for i in range(360):
+            faktor = self.faktor()
+            v = self.v(t)
+            w = self.w(faktor, v)
+
+            w_year_list.append(round(w, 3))
+            data = self.data(t, faktor, v, w)            
+            all_data_list.append(data)
+            t += 1
+        
+        year_sum = sum(w_year_list)
+        return [w_year_list, year_sum, all_data_list]
