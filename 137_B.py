@@ -4,12 +4,12 @@ projketuppgift 137 B
 from kraftverk_B import Vindkraftverk
 from kraftverk_B import Solkraftverk
 
-def powerplant_type():
+def powerplant_type(): #frågar efter vilken typ av krafverk som ska köras
     print("1. Solar powerplant\n2. Wind powerplant")
     a = True
     while a == True:
         try:
-            print("Enter number for corresponding powerplant type:", end="")
+            print("Enter number for the type of powerplant to be simulated:", end="")
             pwrplnt_type = int(input())
             if pwrplnt_type == 1 or pwrplnt_type == 2: 
                 return pwrplnt_type
@@ -54,11 +54,11 @@ def rotor_size():
             print("Enter positive numerical value beteween 25 and 50 only")
     return rotor_size
  
-def prop_konst_input():
+def prop_konst_input(w): #propotionalitetstkonstant
     a = True
     while a == True:
         try:
-            print("Enter proportionality constant of powerplant [W]:", end="")
+            print("Enter proportionality constant of powerplant",w,":", end="")
             prop_konst = float(input())
             if prop_konst <= 0: raise ValueError
             a = False
@@ -81,7 +81,7 @@ def latitude_input():
 def add_latitude():
     t = False
     while t == False:
-        print("Add latitude(y/n):", end="") #frågar om fler latituder
+        print("Add additional latitude(y/n):", end="") #frågar om fler latituder
         try:
             add_latitud = str(input())
             if add_latitud == "y" or add_latitud == "":
@@ -98,28 +98,46 @@ def result(w_sum_list, latitude_list):
     year_sum_dict = { }
     i = 0
     for w in w_sum_list:
-        year_sum_dict[latitude_list[i]] = [i, round(w/360, 1)]
+        year_sum_dict[latitude_list[i]] = [i, round(w/360, 1)] #skapar en dictionary för att inte "tappa bort" index 
         i += 1
     sort_year_sum_dict = dict(sorted(year_sum_dict.items()))
     
     #presenterar resultat
     i = 1
     for key,value in sort_year_sum_dict.items():
-        print("Powerplant Nr:", i,"Production:","{[1]}".format(value),"W/day", "Latitude:", "{}".format(key),"°")
+        print("Powerplant Nr:", i,"Production:","{[1]}".format(value),"W/day", "Latitude:", "{}".format(key),"°") 
         i += 1
     return(sort_year_sum_dict)
 
-def write_result(sort_year_sum_dict, powerplant_list, all_powerplant_all_data_list):
+def write_result(sort_year_sum_dict, powerplant_list, all_powerplant_all_data_list): #skriver en tabell med värden dag för dag till fil
     a = True
     while a == True:
-        print("For daily data, enter Nr of powerplant:",end="")
+        print("For file with daily data, enter Nr of the powerplant you wish to view:",end="")
         try:
             n = int(input()) 
+            N = n
             n = list(sort_year_sum_dict.values())[n-1][0] #tar fram original index för att anropa rätt objekt
             powerplant_list[n].write_detail_data("137.txt", all_powerplant_all_data_list[n])
             a = False
+            print("File with daily data for powerplant Nr",N,"exist now under 137.txt on your computer")
         except ValueError: print("Enter integer for corresponding powerplant")
         except IndexError: print("Powerplant does not exist, try again")
+
+def exxit(): #möjligör för anvädaren att avsluta eller skapa textfil
+    print("1: Recieve daily production data\n2: Leave simulator")
+    a = True
+    while a == True:
+        print("Enter your choice:", end="")
+        try:
+            exxit = int(input())
+            if exxit == 1: 
+                return False
+                a = False
+            if exxit == 2: 
+                return True
+                a = False
+            else: raise ValueError
+        except ValueError: print("Enter nr 1 or 2 only")
 
 def main():
 
@@ -127,38 +145,30 @@ def main():
 
     type = powerplant_type()
 
-    if type == 1:
-        powerplant_list = [ ] #lista med alla objekt
-        latitude_list = [ ] #Lista med alla latituder för alla objekt
-        area = area_input()
-        prop_konst = prop_konst_input()
+    powerplant_list = [ ] #lista med alla objekt
+    latitude_list = [ ] #Lista med alla latituder för alla objekt
 
-        a = True
-        while a == True:
-            latitude = latitude_input()
-            powerplant = Solkraftverk(area, prop_konst, latitude) #skapar objekt, dvs skapar ett powerplant
-    
-            powerplant_list.append(powerplant)
-            latitude_list.append(int(latitude))
-            
-            a = add_latitude() #returnerar True/False
+    if type == 1:
+        quantity = area_input()
+        prop_konst = prop_konst_input("[kW/m^2]")
 
     if type == 2:
-        powerplant_list = [ ] #lista med alla objekt
-        latitude_list = [ ] #Lista med alla latituder för alla objekt
         quantity = quant_input()
-        prop_konst = prop_konst_input()
+        prop_konst = prop_konst_input("[kW]")
         rotor = rotor_size()
 
-        a = True
-        while a == True:
-            latitude = latitude_input()
-            powerplant = Vindkraftverk(quantity, prop_konst, latitude, rotor) #skapar objekt, dvs skapar ett powerplant
+    a = True
+    while a == True:
+        latitude = latitude_input()
+        if type == 1:
+            powerplant = Solkraftverk(quantity, prop_konst, latitude) #skapar objekt, dvs skapar ett powerplant
+        if type == 2:
+            powerplant = Vindkraftverk(quantity, prop_konst, latitude, rotor)
+
+        powerplant_list.append(powerplant)
+        latitude_list.append(int(latitude))
             
-            powerplant_list.append(powerplant)
-            latitude_list.append(int(latitude))
-            
-            a = add_latitude()
+        a = add_latitude() #returnerar True/False
 
     w_sum_list = [ ] #årsproduktion för varje objekt(kraftverk)
     all_powerplant_all_data_list = [ ] #lista med listor av alla värden per dag för alla objek.
@@ -171,8 +181,12 @@ def main():
         all_data_list = year_loop[2]
         all_powerplant_all_data_list.append(all_data_list)
 
-    sort_year_sum_dict = result(w_sum_list, latitude_list)
+    sort_year_sum_dict = result(w_sum_list, latitude_list) #Skriver resultat för varje kraftverk och returnerar dictionary för att kunna anroppa rätt objekt
 
-    write_result(sort_year_sum_dict, powerplant_list, all_powerplant_all_data_list)
+    end = exxit()
+    if end == False:
+        write_result(sort_year_sum_dict, powerplant_list, all_powerplant_all_data_list)
+
+    print("POWEPLANT SIMULATOR HAS ENDED")
 
 main()
