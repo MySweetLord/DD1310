@@ -1,6 +1,8 @@
 """
 P-uppgift 137 klasser för B
 """
+"""En klass för varje kraftverkstyp trotts snarlika funktioner. 
+Blir på så sätt lättare att ändra hur vindkraftverk tar fram energi utan att ändra solkraftverk"""
 
 import random 
 import math as µ
@@ -32,7 +34,7 @@ class Solkraftverk:
         return w
 
     def data(self, t, faktor, v, w):
-        data = [t, round(self.area), round(self.latitude, 3), round(self.prop_konst), round(faktor, 4), round(v, 2), round(w, 1)]
+        data = [t, round(self.area), round(self.latitude), round(self.prop_konst), round(faktor, 3), round(v, 2), round(w, 1)]
         return data
 
     def std_dev(self, year_sum, w_year_list):
@@ -57,7 +59,7 @@ class Solkraftverk:
             file.write(month[n]+"\n")
             file.write("_"*100+"\n")
             gap = "   "
-            file.write(f"{'Day' :3s} {gap} {'Area[m2]' :10s} {gap} {'latitude' :10s} {gap} {'Prop_konst[kWh]' :10s} {gap} {'Exposure' :10s} {gap} {'v' :10s} {gap} {'Production[W]' :10s}"+"\n")
+            file.write(f"{'Day' :3s} {gap} {'Area[m2]' :10s} {gap} {'Latitude' :10s} {gap} {'Prop_konst[kWh]' :10s} {gap} {'Sun exposure' :10s} {gap} {'v' :10s} {gap} {'Production[W]' :10s}"+"\n")
             file.write("_"*100+"\n")
             n += 1
             for data in all_data_list[30*(x-1):30*x]:
@@ -111,7 +113,7 @@ class Vindkraftverk:
         return w
 
     def data(self, t, faktor, v, w):
-        data = [t, round(self.quantity), round(self.latitude, 3), round(self.prop_konst), round(faktor, 4), round(v, 2), round(w, 1)]
+        data = [t, round(self.quantity), round(self.latitude, 1), round(self.rotor), round(self.prop_konst), round(faktor, 3), round(v, 2), round(w, 1)]
         return data
 
     def std_dev(self, year_sum, w_year_list):
@@ -135,15 +137,15 @@ class Vindkraftverk:
             file.write("="*100+"\n")
             file.write(month[n]+"\n")
             file.write("_"*100+"\n")
-            gap = "   "
-            file.write(f"{'Day' :3s} {gap} {'Quantity' :10s} {gap} {'latitude' :10s} {gap} {'Prop_konst[kWh]' :10s} {gap} {'Wind' :10s} {gap} {'v' :10s} {gap} {'Production[W]' :10s}"+"\n")
+            gap = "  "
+            file.write(f"{'Day' :3s} {gap} {'Quantity' :10s} {gap} {'Latitude' :10s} {gap} {'Rotor size [m]' :10s} {gap} {'Prop_konst[kWh]' :10s} {gap} {'Wind' :10s} {gap} {'v' :10s} {gap} {'Production[W]' :10s}"+"\n")
             file.write("_"*100+"\n")
             n += 1
             for data in all_data_list[30*(x-1):30*x]:
-                file.write(f"{data[0] :<3d} {gap} {data[1] :<10d} {gap*2} {data[2] :<10.3f} {gap*3} {data[3] :<8d} {gap} {data[4] :10.4f} {gap} {data[5] :10.2f} {gap*3} {data[6] :<10.1f}"+"\n")
+                file.write(f"{data[0] :<3d} {gap} {data[1] :<10d} {gap*2} {data[2] :<10f} {gap*3} {data[3] :<10d} {gap} {data[4] :10f} {gap} {data[5] :10f} {gap} {data[6] :<10f} {gap} {data[7]}"+"\n")
             x += 1
 
-    def year_loop(self):
+    def year_loop(self): #kör ovan metoder för att simulera ett år 
     
         t = 1 
         w_year_list = [ ] #lista med w för varje dag för ett objekt(kraftverk)    
