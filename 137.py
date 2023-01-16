@@ -1,6 +1,10 @@
 """
-projketuppgift 137 C
+projketuppgift 137(solkraftverk simulator) - Nivå C
+
+@Maximilian Karbach - 22.11.20
+
 """
+
 from kraftverk import Kraftverk
 
 def area_input():
@@ -13,7 +17,7 @@ def area_input():
             a = False
         except ValueError:
             print("Enter positive numerical value only")
-    return int(area)
+    return area
     
 def prop_konst_input(): #propotionalitetskonstant
     a = True
@@ -82,20 +86,20 @@ def write_result(sort_year_sum_dict, powerplant_list, all_powerplant_all_data_li
             powerplant_list[n].write_detail_data("137.txt", all_powerplant_all_data_list[n])
             a = False
             print("File with daily data for powerplant Nr",N,"exist now under 137.txt on your computer")
-        except ValueError: print("Enter integer for corresponding powerplant")
+        #except ValueError: print("Enter integer for corresponding powerplant")
         except IndexError: print("Powerplant does not exist, try again")
 
-def exxit(): #möjligör för anvädaren att avsluta eller skapa textfil
+def end_receive(): #möjligör för anvädaren att avsluta eller skapa textfil
     print("1: Recieve daily production data\n2: Leave simulator")
     a = True
     while a == True:
         print("Enter your choice:", end="")
         try:
-            exxit = int(input())
-            if exxit == 1: 
+            end_receive = int(input())
+            if end_receive == 1: 
                 return False
                 a = False
-            if exxit == 2: 
+            if end_receive == 2: 
                 return True
                 a = False
             else: raise ValueError
@@ -134,7 +138,7 @@ def main():
 
     sort_year_sum_dict = result(w_sum_list, latitude_list) #Skriver resultat för varje kraftverk och returnerar dictionary för att kunna anroppa rätt objekt
     
-    end = exxit()
+    end = end_receive()
     if end == False:
         write_result(sort_year_sum_dict, powerplant_list, all_powerplant_all_data_list)
     

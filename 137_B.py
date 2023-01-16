@@ -1,8 +1,9 @@
 """
-projketuppgift 137 B
+projketuppgift 137(sol/vind-kraftverk simulator) - Nivå B
+
+@Maximilian Karbach - 22.11.20
 """
-from kraftverk_B import Vindkraftverk
-from kraftverk_B import Solkraftverk
+from kraftverk_B import Kraftverk
 
 def powerplant_type(): #frågar efter vilken typ av krafverk som ska köras
     print("1. Solar powerplant\n2. Wind powerplant")
@@ -28,19 +29,19 @@ def area_input():
             a = False
         except ValueError:
             print("Enter positive numerical value only")
-    return int(area)
+    return area
 
 def quant_input():
     a = True
     while a == True:
         try:
-            print("Enter number of wind-powerplants:", end="")
+            print("Enter number of wind-turbines:", end="")
             quantity = int(input())
             if quantity <= 0: raise ValueError
             a = False
         except ValueError:
             print("Enter positive integer value only")
-    return int(quantity)
+    return quantity
 
 def rotor_size():
     a = True
@@ -116,6 +117,7 @@ def write_result(sort_year_sum_dict, powerplant_list, all_powerplant_all_data_li
         try:
             n = int(input()) 
             N = n
+            if n == 0: raise IndexError
             n = list(sort_year_sum_dict.values())[n-1][0] #tar fram original index för att anropa rätt objekt
             powerplant_list[n].write_detail_data("137.txt", all_powerplant_all_data_list[n])
             a = False
@@ -123,17 +125,17 @@ def write_result(sort_year_sum_dict, powerplant_list, all_powerplant_all_data_li
         except ValueError: print("Enter integer for corresponding powerplant")
         except IndexError: print("Powerplant does not exist, try again")
 
-def exxit(): #möjligör för anvädaren att avsluta eller skapa textfil
+def end_receive(): #möjligör för anvädaren att avsluta eller skapa textfil
     print("1: Recieve daily production data\n2: Leave simulator")
     a = True
     while a == True:
         print("Enter your choice:", end="")
         try:
-            exxit = int(input())
-            if exxit == 1: 
+            end_receive = int(input())
+            if end_receive == 1: 
                 return False
                 a = False
-            if exxit == 2: 
+            if end_receive == 2: 
                 return True
                 a = False
             else: raise ValueError
@@ -161,9 +163,9 @@ def main():
     while a == True:
         latitude = latitude_input()
         if type == 1:
-            powerplant = Solkraftverk(quantity, prop_konst, latitude) #skapar objekt, dvs skapar ett powerplant
+            powerplant = Kraftverk(type, quantity, prop_konst, latitude) #skapar objekt, dvs skapar ett kraftverk
         if type == 2:
-            powerplant = Vindkraftverk(quantity, prop_konst, latitude, rotor)
+            powerplant = Kraftverk(type, quantity, prop_konst, latitude, rotor)
 
         powerplant_list.append(powerplant)
         latitude_list.append(int(latitude))
@@ -183,7 +185,7 @@ def main():
 
     sort_year_sum_dict = result(w_sum_list, latitude_list) #Skriver resultat för varje kraftverk och returnerar dictionary för att kunna anroppa rätt objekt
 
-    end = exxit()
+    end = end_receive()
     if end == False:
         write_result(sort_year_sum_dict, powerplant_list, all_powerplant_all_data_list)
 
